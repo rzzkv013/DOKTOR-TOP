@@ -12,6 +12,8 @@ Doctor discovery, appointment UI, doctor profiles, and a PostgreSQL-backed docto
 
 Doctor accounts can register at `/register`, sign in at `/login`, and manage profile details and video links at `/dashboard`. Profile photos, reel covers, and videos are stored as URLs; upload hosting is not included. Publicly registered doctors with a non-empty bio appear in the directory.
 
+The site includes a persistent light/dark theme switch, a softly animated medical background, and gently moving hero portraits. Motion is reduced when the operating system requests reduced motion.
+
 The appointment form currently provides a front-end confirmation only. Appointment requests are not persisted.
 
 ## Getting Started
