@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useState, type FormEvent } from "react";
+import { motion, useReducedMotion } from "motion/react";
 import {
   ArrowLeft,
   CalendarDays,
@@ -27,6 +28,7 @@ type DoctorProfileProps = {
 };
 
 export function DoctorProfile({ doctor }: DoctorProfileProps) {
+  const prefersReducedMotion = useReducedMotion();
   const [selectedReel, setSelectedReel] = useState<DoctorReel | null>(null);
   const [likedReels, setLikedReels] = useState<string[]>([]);
   const [comments, setComments] = useState<Record<string, string[]>>({});
@@ -72,8 +74,13 @@ export function DoctorProfile({ doctor }: DoctorProfileProps) {
           Shifokorlar ro‘yxatiga qaytish
         </Link>
 
-        <section className="mt-5 overflow-hidden rounded-[30px] border border-white bg-white shadow-[0_16px_55px_rgba(16,54,61,0.07)]">
-          <div className="h-32 bg-gradient-to-r from-[#c6eee5] via-[#e3f5ef] to-[#f4faf7] sm:h-44">
+        <motion.section
+          initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: prefersReducedMotion ? 0 : 0.45, ease: "easeOut" }}
+          className="mt-5 overflow-hidden rounded-[30px] border border-white bg-white shadow-[0_16px_55px_rgba(16,54,61,0.07)]"
+        >
+          <div className="profile-cover h-32 bg-gradient-to-r from-[#c6eee5] via-[#e3f5ef] to-[#f4faf7] sm:h-44">
             <div className="profile-cover-pattern h-full" />
           </div>
           <div className="px-5 pb-6 sm:px-9 sm:pb-8">
@@ -95,9 +102,11 @@ export function DoctorProfile({ doctor }: DoctorProfileProps) {
                     <h1 className="text-2xl font-bold tracking-[-0.055em] text-slate-900 sm:text-[32px]">
                       {doctor.name}
                     </h1>
-                    <span className="inline-flex items-center gap-1 rounded-full bg-teal-50 px-2.5 py-1 text-[10px] font-bold text-teal-800">
-                      <ShieldCheck size={12} /> Tasdiqlangan
-                    </span>
+                    {doctor.verified && (
+                      <span className="inline-flex items-center gap-1 rounded-full bg-teal-50 px-2.5 py-1 text-[10px] font-bold text-teal-800">
+                        <ShieldCheck size={12} /> Tasdiqlangan
+                      </span>
+                    )}
                   </div>
                   <p className="mt-1 text-sm font-medium text-teal-700">
                     {doctor.specialtyUz}{" "}
@@ -133,11 +142,19 @@ export function DoctorProfile({ doctor }: DoctorProfileProps) {
             <div className="mt-7 grid grid-cols-3 divide-x divide-slate-100 rounded-2xl bg-[#f8fbfa] py-4">
               <div className="text-center">
                 <p className="flex items-center justify-center gap-1 text-lg font-bold text-slate-900">
-                  <Star size={15} className="fill-amber-400 text-amber-400" />
-                  {doctor.rating.toFixed(1)}
+                  {doctor.rating > 0 ? (
+                    <>
+                      <Star size={15} className="fill-amber-400 text-amber-400" />
+                      {doctor.rating.toFixed(1)}
+                    </>
+                  ) : (
+                    "—"
+                  )}
                 </p>
                 <p className="mt-1 text-[10px] font-medium text-slate-400 sm:text-xs">
-                  {doctor.reviewCount} ta sharh
+                  {doctor.reviewCount > 0
+                    ? `${doctor.reviewCount} ta sharh`
+                    : "Hali sharh yo‘q"}
                 </p>
               </div>
               <div className="text-center">
@@ -158,11 +175,17 @@ export function DoctorProfile({ doctor }: DoctorProfileProps) {
               </div>
             </div>
           </div>
-        </section>
+        </motion.section>
 
         <div className="mt-7 grid items-start gap-7 lg:grid-cols-[0.78fr_1.22fr]">
           <div className="space-y-5">
-            <section className="rounded-[24px] border border-white bg-white p-6 shadow-[0_8px_35px_rgba(16,54,61,0.045)]">
+            <motion.section
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.4 }}
+              className="rounded-[24px] border border-white bg-white p-6 shadow-[0_8px_35px_rgba(16,54,61,0.045)] transition-shadow duration-300 hover:shadow-xl hover:shadow-teal-950/5"
+            >
               <h2 className="text-lg font-bold tracking-[-0.035em] text-slate-900">
                 Shifokor haqida
               </h2>
@@ -178,9 +201,15 @@ export function DoctorProfile({ doctor }: DoctorProfileProps) {
                   </span>
                 </p>
               </div>
-            </section>
+            </motion.section>
 
-            <section className="rounded-[24px] border border-white bg-white p-6 shadow-[0_8px_35px_rgba(16,54,61,0.045)]">
+            <motion.section
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.4, delay: 0.06 }}
+              className="rounded-[24px] border border-white bg-white p-6 shadow-[0_8px_35px_rgba(16,54,61,0.045)] transition-shadow duration-300 hover:shadow-xl hover:shadow-teal-950/5"
+            >
               <div className="flex items-center justify-between">
                 <h2 className="text-lg font-bold tracking-[-0.035em] text-slate-900">
                   Ish vaqti
@@ -213,9 +242,15 @@ export function DoctorProfile({ doctor }: DoctorProfileProps) {
                   {doctor.address}, {doctor.location}
                 </p>
               </div>
-            </section>
+            </motion.section>
 
-            <section className="rounded-[24px] border border-white bg-white p-6 shadow-[0_8px_35px_rgba(16,54,61,0.045)]">
+            <motion.section
+              initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+              whileInView={{ opacity: 1, y: 0 }}
+              viewport={{ once: true, amount: 0.15 }}
+              transition={{ duration: prefersReducedMotion ? 0 : 0.4, delay: 0.12 }}
+              className="rounded-[24px] border border-white bg-white p-6 shadow-[0_8px_35px_rgba(16,54,61,0.045)] transition-shadow duration-300 hover:shadow-xl hover:shadow-teal-950/5"
+            >
               <h2 className="text-lg font-bold tracking-[-0.035em] text-slate-900">
                 Sertifikatlar
               </h2>
@@ -232,10 +267,16 @@ export function DoctorProfile({ doctor }: DoctorProfileProps) {
                   </li>
                 ))}
               </ul>
-            </section>
+            </motion.section>
           </div>
 
-          <section className="rounded-[24px] border border-white bg-white p-5 shadow-[0_8px_35px_rgba(16,54,61,0.045)] sm:p-7">
+          <motion.section
+            initial={prefersReducedMotion ? false : { opacity: 0, y: 16 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, amount: 0.1 }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.45, delay: 0.08 }}
+            className="rounded-[24px] border border-white bg-white p-5 shadow-[0_8px_35px_rgba(16,54,61,0.045)] transition-shadow duration-300 hover:shadow-xl hover:shadow-teal-950/5 sm:p-7"
+          >
             <div className="flex flex-col justify-between gap-3 sm:flex-row sm:items-end">
               <div>
                 <p className="text-[11px] font-bold uppercase tracking-[0.16em] text-teal-700">
@@ -254,11 +295,14 @@ export function DoctorProfile({ doctor }: DoctorProfileProps) {
             </div>
             <div className="mt-6 grid grid-cols-2 gap-3 sm:grid-cols-3">
               {doctor.reels.map((reel, index) => (
-                <button
+                <motion.button
                   type="button"
                   key={reel.id}
                   onClick={() => setSelectedReel(reel)}
-                  className={`reel-tile group relative aspect-[0.78] overflow-hidden rounded-[18px] bg-slate-100 text-left ${
+                  whileHover={prefersReducedMotion ? undefined : { y: -5, scale: 1.025 }}
+                  whileTap={prefersReducedMotion ? undefined : { scale: 0.98 }}
+                  transition={{ duration: prefersReducedMotion ? 0 : 0.22 }}
+                  className={`reel-tile group relative aspect-[0.78] overflow-hidden rounded-[18px] bg-slate-100 text-left shadow-md shadow-slate-900/10 transition-shadow duration-300 hover:shadow-xl hover:shadow-teal-950/20 ${
                     index === 0 && doctor.reels.length === 2
                       ? "sm:col-span-2 sm:aspect-[1.4]"
                       : ""
@@ -292,7 +336,7 @@ export function DoctorProfile({ doctor }: DoctorProfileProps) {
                   <span className="absolute right-3 top-3 flex size-7 items-center justify-center rounded-full bg-white/20 text-white backdrop-blur">
                     <Play size={12} fill="currentColor" />
                   </span>
-                </button>
+                </motion.button>
               ))}
             </div>
             <div className="mt-6 flex items-center gap-3 rounded-2xl bg-teal-50/70 p-4">
@@ -311,7 +355,7 @@ export function DoctorProfile({ doctor }: DoctorProfileProps) {
                 Yozilish
               </button>
             </div>
-          </section>
+          </motion.section>
         </div>
       </div>
 
@@ -325,7 +369,10 @@ export function DoctorProfile({ doctor }: DoctorProfileProps) {
             }
           }}
         >
-          <section
+          <motion.section
+            initial={prefersReducedMotion ? false : { opacity: 0, scale: 0.97, y: 12 }}
+            animate={{ opacity: 1, scale: 1, y: 0 }}
+            transition={{ duration: prefersReducedMotion ? 0 : 0.24, ease: "easeOut" }}
             role="dialog"
             aria-modal="true"
             aria-label={selectedReel.title}
@@ -470,7 +517,7 @@ export function DoctorProfile({ doctor }: DoctorProfileProps) {
                 </button>
               </form>
             </div>
-          </section>
+          </motion.section>
         </div>
       )}
 

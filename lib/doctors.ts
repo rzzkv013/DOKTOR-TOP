@@ -16,6 +16,7 @@ export type Doctor = {
   experience: number;
   rating: number;
   reviewCount: number;
+  verified?: boolean;
   price: number;
   clinic: string;
   location: string;
@@ -34,6 +35,7 @@ const sampleVideo =
 export const doctors: Doctor[] = [
   {
     id: "amira-karimova",
+    verified: true,
     name: "Amira Karimova",
     specialty: "Cardiologist",
     specialtyUz: "Kardiolog",
@@ -92,6 +94,7 @@ export const doctors: Doctor[] = [
   },
   {
     id: "jasur-rahimov",
+    verified: true,
     name: "Jasur Rahimov",
     specialty: "Dentist",
     specialtyUz: "Stomatolog",
@@ -140,6 +143,7 @@ export const doctors: Doctor[] = [
   },
   {
     id: "dilnoza-yusupova",
+    verified: true,
     name: "Dilnoza Yusupova",
     specialty: "Neurologist",
     specialtyUz: "Nevrolog",
@@ -188,6 +192,7 @@ export const doctors: Doctor[] = [
   },
   {
     id: "madina-azizova",
+    verified: true,
     name: "Madina Azizova",
     specialty: "Pediatrician",
     specialtyUz: "Pediatr",
@@ -236,6 +241,7 @@ export const doctors: Doctor[] = [
   },
   {
     id: "bekzod-umarov",
+    verified: true,
     name: "Bekzod Umarov",
     specialty: "Dermatologist",
     specialtyUz: "Dermatolog",
@@ -284,6 +290,7 @@ export const doctors: Doctor[] = [
   },
   {
     id: "sarvar-tursunov",
+    verified: true,
     name: "Sarvar Tursunov",
     specialty: "Ophthalmologist",
     specialtyUz: "Oftalmolog",

@@ -1,5 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
+import { motion, useReducedMotion } from "motion/react";
 import { ArrowUpRight, MapPin, Star } from "lucide-react";
 import type { Doctor } from "@/lib/doctors";
 import { formatPrice } from "@/lib/doctors";
@@ -11,10 +12,29 @@ type DoctorCardProps = {
 };
 
 export function DoctorCard({ doctor, index, onBook }: DoctorCardProps) {
+  const prefersReducedMotion = useReducedMotion();
+
   return (
-    <article
-      className="doctor-card group overflow-hidden rounded-[24px] border border-slate-100 bg-white shadow-[0_4px_24px_rgba(16,54,61,0.045)] transition-all duration-300 hover:scale-[1.02] hover:border-teal-100 hover:shadow-2xl hover:shadow-teal-950/10"
-      style={{ animationDelay: `${index * 55}ms` }}
+    <motion.article
+      initial={prefersReducedMotion ? false : { opacity: 0, y: 18 }}
+      whileInView={{ opacity: 1, y: 0 }}
+      viewport={{ once: true, amount: 0.12 }}
+      transition={{
+        duration: prefersReducedMotion ? 0 : 0.38,
+        delay: prefersReducedMotion ? 0 : index * 0.055,
+        ease: [0.2, 0.7, 0.25, 1],
+      }}
+      whileHover={
+        prefersReducedMotion
+          ? undefined
+          : {
+              scale: 1.02,
+              y: -4,
+              boxShadow: "0 24px 55px rgba(16, 54, 61, 0.14)",
+            }
+      }
+      whileTap={prefersReducedMotion ? undefined : { scale: 0.985 }}
+      className="group overflow-hidden rounded-[24px] border border-slate-100 bg-white shadow-[0_4px_24px_rgba(16,54,61,0.045)] transition-colors duration-300 hover:border-teal-100"
     >
       <Link
         href={`/doctors/${doctor.id}`}
@@ -33,8 +53,14 @@ export function DoctorCard({ doctor, index, onBook }: DoctorCardProps) {
           {doctor.specialtyUz}
         </span>
         <span className="absolute right-4 top-4 flex items-center gap-1 rounded-full border border-white/60 bg-white/90 px-2.5 py-1.5 text-xs font-bold text-slate-800 shadow-sm backdrop-blur-md">
-          <Star size={13} className="fill-amber-400 text-amber-400" />
-          {doctor.rating.toFixed(1)}
+          {doctor.rating > 0 ? (
+            <>
+              <Star size={13} className="fill-amber-400 text-amber-400" />
+              {doctor.rating.toFixed(1)}
+            </>
+          ) : (
+            "Yangi"
+          )}
         </span>
         <span className="absolute bottom-3 right-3 flex size-9 items-center justify-center rounded-full bg-white/85 text-slate-700 opacity-0 shadow-md backdrop-blur-md transition-all duration-300 group-hover:translate-x-0.5 group-hover:opacity-100">
           <ArrowUpRight size={17} />
@@ -84,6 +110,6 @@ export function DoctorCard({ doctor, index, onBook }: DoctorCardProps) {
           </button>
         </div>
       </div>
-    </article>
+    </motion.article>
   );
 }

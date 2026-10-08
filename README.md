@@ -1,4 +1,18 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Medora
+
+Doctor discovery, appointment UI, doctor profiles, and a PostgreSQL-backed doctor portal built with Next.js App Router, TypeScript, and Tailwind CSS.
+
+## Run locally
+
+1. Install dependencies with `npm install`.
+2. Copy `.env.example` to `.env` and set `DATABASE_URL` to a PostgreSQL database.
+3. Set `AUTH_SECRET` to a private random string of at least 32 characters. For example, run `node -e "console.log(require('crypto').randomBytes(32).toString('hex'))"` and use its output.
+4. Generate the Prisma client and apply the schema with `npm run db:generate` and `npm run db:migrate`.
+5. Start the app with `npm run dev`.
+
+Doctor accounts can register at `/register`, sign in at `/login`, and manage profile details and video links at `/dashboard`. Profile photos, reel covers, and videos are stored as URLs; upload hosting is not included. Publicly registered doctors with a non-empty bio appear in the directory.
+
+The appointment form currently provides a front-end confirmation only. Appointment requests are not persisted.
 
 ## Getting Started
 

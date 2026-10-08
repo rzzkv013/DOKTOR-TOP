@@ -1,0 +1,46 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model DoctorAccount {
+  id             String       @id @default(cuid())
+  email          String       @unique
+  passwordHash   String
+  name           String
+  specialty      String
+  experience     Int          @default(0)
+  clinic         String       @default("Mustaqil amaliyot")
+  location       String       @default("Tashkent")
+  address        String       @default("")
+  image          String       @default("")
+  bio            String       @default("")
+  price          Int          @default(100000)
+  languages      String[]     @default([])
+  certifications String[]     @default([])
+  schedule       Json         @default("[]")
+  reels          DoctorReel[]
+  createdAt      DateTime     @default(now())
+  updatedAt      DateTime     @updatedAt
+
+  @@index([specialty])
+  @@index([location])
+}
+
+model DoctorReel {
+  id        String        @id @default(cuid())
+  doctorId  String
+  doctor    DoctorAccount @relation(fields: [doctorId], references: [id], onDelete: Cascade)
+  title     String
+  category  String        @default("Foydali maslahat")
+  coverUrl  String
+  videoUrl  String
+  views     Int           @default(0)
+  createdAt DateTime      @default(now())
+
+  @@index([doctorId, createdAt])
+}

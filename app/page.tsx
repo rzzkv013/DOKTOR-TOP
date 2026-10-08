@@ -21,7 +21,7 @@ const benefits = [
 
 export default function Home() {
   return (
-    <main className="relative min-h-screen overflow-hidden bg-[#f6fbfa]">
+    <main className="relative min-h-screen overflow-hidden bg-transparent">
       <div aria-hidden="true" className="ambient ambient-one" />
       <div aria-hidden="true" className="ambient ambient-two" />
       <div aria-hidden="true" className="floating-pill floating-pill-one" />
@@ -91,9 +91,9 @@ export default function Home() {
 
           <div className="relative mx-auto w-full max-w-[520px] lg:ml-auto">
             <div className="absolute inset-6 rounded-[44px] bg-teal-200/50 blur-3xl" />
-            <div className="relative overflow-hidden rounded-[36px] border border-white/90 bg-gradient-to-br from-[#c9f0e6] via-[#edf9f6] to-[#def3ef] p-6 shadow-[0_30px_80px_rgba(22,100,91,0.14)] sm:p-8">
-              <div className="absolute -right-16 -top-20 size-64 rounded-full border border-white/60" />
-              <div className="absolute -right-7 -top-10 size-48 rounded-full border border-white/60" />
+            <div className="hero-visual relative overflow-hidden rounded-[36px] border border-white/90 bg-gradient-to-br from-[#c9f0e6] via-[#edf9f6] to-[#def3ef] p-6 shadow-[0_30px_80px_rgba(22,100,91,0.14)] sm:p-8">
+              <div className="hero-orbit absolute -right-16 -top-20 size-64 rounded-full border border-white/60" />
+              <div className="hero-orbit hero-orbit-slow absolute -right-7 -top-10 size-48 rounded-full border border-white/60" />
               <div className="relative flex items-start justify-between">
                 <div>
                   <p className="text-xs font-semibold uppercase tracking-[0.14em] text-teal-800/65">
@@ -116,7 +116,7 @@ export default function Home() {
                     <Link
                       href={`/doctors/${doctor.id}`}
                       key={doctor.id}
-                      className={`group relative size-[78px] overflow-hidden rounded-[24px] border-[3px] border-white shadow-xl transition-transform hover:z-10 hover:scale-110 sm:size-[88px] ${
+                      className={`portrait-float portrait-float-${index + 1} group relative size-[78px] overflow-hidden rounded-[24px] border-[3px] border-white shadow-xl transition-transform hover:z-10 hover:scale-110 sm:size-[88px] ${
                         index === 0
                           ? "translate-y-1"
                           : index === 1

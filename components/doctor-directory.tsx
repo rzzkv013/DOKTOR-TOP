@@ -1,6 +1,6 @@
 "use client";
 
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import {
   ArrowDownWideNarrow,
   ChevronDown,
@@ -14,22 +14,65 @@ import { doctors, formatPrice, type Doctor } from "@/lib/doctors";
 import { AppointmentModal } from "@/components/appointment-modal";
 import { DoctorCard } from "@/components/doctor-card";
 
-const specialties = [...new Set(doctors.map((doctor) => doctor.specialty))];
-const clinics = [...new Set(doctors.map((doctor) => doctor.clinic))];
-
 export function DoctorDirectory() {
+  const [registeredDoctors, setRegisteredDoctors] = useState<Doctor[]>([]);
+  const [databaseError, setDatabaseError] = useState("");
   const [query, setQuery] = useState("");
   const [specialty, setSpecialty] = useState("");
   const [clinic, setClinic] = useState("");
+  const [location, setLocation] = useState("");
   const [minimumRating, setMinimumRating] = useState(0);
   const [maximumPrice, setMaximumPrice] = useState(250000);
   const [sortBy, setSortBy] = useState("recommended");
   const [filtersOpen, setFiltersOpen] = useState(false);
   const [selectedDoctor, setSelectedDoctor] = useState<Doctor | null>(null);
 
+  useEffect(() => {
+    let active = true;
+    async function loadRegisteredDoctors() {
+      try {
+        const response = await fetch("/api/doctors");
+        const result: { doctors?: Doctor[]; error?: string } = await response.json();
+        if (!response.ok) {
+          throw new Error(result.error ?? "Ro‘yxatdan o‘tgan shifokorlarni yuklab bo‘lmadi.");
+        }
+        if (active) setRegisteredDoctors(result.doctors ?? []);
+      } catch (error) {
+        if (active) {
+          setDatabaseError(
+            error instanceof Error
+              ? error.message
+              : "Ro‘yxatdan o‘tgan shifokorlarni yuklab bo‘lmadi.",
+          );
+        }
+      }
+    }
+    void loadRegisteredDoctors();
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  const allDoctors = useMemo(() => {
+    const demoIds = new Set(doctors.map((doctor) => doctor.id));
+    return [...doctors, ...registeredDoctors.filter((doctor) => !demoIds.has(doctor.id))];
+  }, [registeredDoctors]);
+  const specialties = useMemo(
+    () => [...new Set(allDoctors.map((doctor) => doctor.specialty))],
+    [allDoctors],
+  );
+  const clinics = useMemo(
+    () => [...new Set(allDoctors.map((doctor) => doctor.clinic))],
+    [allDoctors],
+  );
+  const locations = useMemo(
+    () => [...new Set(allDoctors.map((doctor) => doctor.location))],
+    [allDoctors],
+  );
+
   const filteredDoctors = useMemo(() => {
     const normalizedQuery = query.trim().toLocaleLowerCase();
-    const result = doctors.filter((doctor) => {
+    const result = allDoctors.filter((doctor) => {
       const matchesQuery =
         normalizedQuery.length === 0 ||
         [
@@ -44,6 +87,7 @@ export function DoctorDirectory() {
         matchesQuery &&
         (!specialty || doctor.specialty === specialty) &&
         (!clinic || doctor.clinic === clinic) &&
+        (!location || doctor.location === location) &&
         doctor.rating >= minimumRating &&
         doctor.price <= maximumPrice
       );
@@ -55,12 +99,22 @@ export function DoctorDirectory() {
       if (sortBy === "price") return first.price - second.price;
       return second.reviewCount - first.reviewCount;
     });
-  }, [clinic, maximumPrice, minimumRating, query, sortBy, specialty]);
+  }, [
+    allDoctors,
+    clinic,
+    location,
+    maximumPrice,
+    minimumRating,
+    query,
+    sortBy,
+    specialty,
+  ]);
 
   const activeFilters = [
     query.trim().length > 0,
     specialty.length > 0,
     clinic.length > 0,
+    location.length > 0,
     minimumRating > 0,
     maximumPrice < 250000,
   ].filter(Boolean).length;
@@ -69,6 +123,7 @@ export function DoctorDirectory() {
     setQuery("");
     setSpecialty("");
     setClinic("");
+    setLocation("");
     setMinimumRating(0);
     setMaximumPrice(250000);
   }
@@ -163,7 +218,7 @@ export function DoctorDirectory() {
             </div>
 
             {filtersOpen && (
-              <div className="mt-4 grid gap-4 border-t border-slate-100 px-1 pt-4 sm:grid-cols-2 lg:grid-cols-4">
+              <div className="mt-4 grid gap-4 border-t border-slate-100 px-1 pt-4 sm:grid-cols-2 lg:grid-cols-5">
                 <label className="block text-xs font-semibold text-slate-600">
                   Mutaxassislik
                   <span className="relative mt-2 block">
@@ -174,6 +229,27 @@ export function DoctorDirectory() {
                     >
                       <option value="">Barchasi</option>
                       {specialties.map((item) => (
+                        <option key={item} value={item}>
+                          {item}
+                        </option>
+                      ))}
+                    </select>
+                    <ChevronDown
+                      size={14}
+                      className="pointer-events-none absolute right-3.5 top-1/2 -translate-y-1/2 text-slate-400"
+                    />
+                  </span>
+                </label>
+                <label className="block text-xs font-semibold text-slate-600">
+                  Shahar
+                  <span className="relative mt-2 block">
+                    <select
+                      value={location}
+                      onChange={(event) => setLocation(event.target.value)}
+                      className="filter-select"
+                    >
+                      <option value="">Barcha shaharlar</option>
+                      {locations.map((item) => (
                         <option key={item} value={item}>
                           {item}
                         </option>
@@ -267,6 +343,16 @@ export function DoctorDirectory() {
             )}
           </div>
 
+          {databaseError && (
+            <p
+              role="status"
+              className="mt-5 rounded-2xl border border-amber-200 bg-amber-50 px-4 py-3 text-xs leading-5 text-amber-800"
+            >
+              {databaseError} Demo shifokorlar ro‘yxati mavjud; yangi profillar
+              uchun PostgreSQL sozlamasini tekshiring.
+            </p>
+          )}
+
           <div className="mt-7 flex items-center justify-between">
             <p className="text-sm text-slate-500">
               <span className="font-bold text-slate-900">
@@ -282,7 +368,7 @@ export function DoctorDirectory() {
 
           {filteredDoctors.length > 0 ? (
             <div
-              key={`${query}-${specialty}-${clinic}-${minimumRating}-${maximumPrice}-${sortBy}`}
+              key={`${query}-${specialty}-${clinic}-${location}-${minimumRating}-${maximumPrice}-${sortBy}`}
               className="mt-5 grid gap-5 sm:grid-cols-2 xl:grid-cols-3"
             >
               {filteredDoctors.map((doctor, index) => (

@@ -38,6 +38,12 @@ export function SiteHeader() {
               {link.label}
             </Link>
           ))}
+          <Link
+            href="/register"
+            className="text-sm font-semibold text-teal-700 transition-colors hover:text-teal-900"
+          >
+            Doktorlar uchun
+          </Link>
           <a
             href="tel:+998712000000"
             className="rounded-full border border-slate-200 px-4 py-2.5 text-sm font-semibold text-slate-700 transition-colors hover:border-teal-200 hover:bg-teal-50 hover:text-teal-800"
@@ -46,21 +52,25 @@ export function SiteHeader() {
           </a>
         </nav>
 
-        <Link
-          href="/#doctors"
-          className="hidden items-center justify-center rounded-full bg-teal-700 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-teal-700/15 transition-all hover:-translate-y-0.5 hover:bg-teal-800 active:scale-95 sm:inline-flex"
-        >
-          Shifokor topish
-        </Link>
-        <button
-          type="button"
-          aria-label={menuOpen ? "Menyuni yopish" : "Menyuni ochish"}
-          aria-expanded={menuOpen}
-          onClick={() => setMenuOpen((open) => !open)}
-          className="flex size-10 items-center justify-center rounded-full border border-slate-200 text-slate-700 md:hidden"
-        >
-          {menuOpen ? <X size={20} /> : <Menu size={20} />}
-        </button>
+        <div className="hidden items-center gap-3 md:flex">
+          <Link
+            href="/#doctors"
+            className="inline-flex items-center justify-center rounded-full bg-teal-700 px-5 py-3 text-sm font-semibold text-white shadow-lg shadow-teal-700/15 transition-all hover:-translate-y-0.5 hover:bg-teal-800 active:scale-95"
+          >
+            Shifokor topish
+          </Link>
+        </div>
+        <div className="flex items-center gap-2 md:hidden">
+          <button
+            type="button"
+            aria-label={menuOpen ? "Menyuni yopish" : "Menyuni ochish"}
+            aria-expanded={menuOpen}
+            onClick={() => setMenuOpen((open) => !open)}
+            className="flex size-10 items-center justify-center rounded-full border border-slate-200 text-slate-700"
+          >
+            {menuOpen ? <X size={20} /> : <Menu size={20} />}
+          </button>
+        </div>
       </div>
 
       {menuOpen && (
@@ -75,6 +85,13 @@ export function SiteHeader() {
               {link.label}
             </Link>
           ))}
+          <Link
+            href="/register"
+            onClick={() => setMenuOpen(false)}
+            className="block py-3 text-sm font-semibold text-teal-700"
+          >
+            Doktorlar uchun
+          </Link>
           <a
             href="tel:+998712000000"
             className="block py-3 text-sm font-medium text-teal-700"
